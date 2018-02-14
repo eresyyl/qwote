@@ -89,3 +89,20 @@ ul.acf-radio-list li label, ul.acf-checkbox-list li label {
     font-size: 15px;
     color: #333;
 }
+
+.acf-button {
+    background-color: #57c7d4;
+    color: #fff;
+    font-weight: 600;
+    font-size: 20px;
+    border-radius: 50%;
+    height: 30px;
+    width: 30px;
+    display: block;
+    line-height: 30px;
+    text-align: center;
+    cursor: pointer;
+	-moz-transition: all 0.1s linear;
+	-webkit-transition: all 0.1s linear;
+	transition: all 0.1s linear;
+}
