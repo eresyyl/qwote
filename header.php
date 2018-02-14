@@ -63,6 +63,9 @@
 <?php // add Account styles if we are on Account page
 if(is_page('account') || is_page_template('agent-profile-template.php')) : ?>
 <link rel="stylesheet" href="<?php bloginfo('template_url'); ?>/assets/examples/css/pages/profile.css">
+<?php // add single-template styles if we are in single-template template
+elseif( get_post_type() == 'template') : ?>
+<link rel="stylesheet" href="<?php bloginfo('template_url'); ?>/assets/examples/css/pages/single-template.css">
 <?php endif; ?>
 
 <link rel="stylesheet" href="<?php bloginfo('template_url'); ?>/assets/examples/css/apps/message.min.css?v2.1.0">
