@@ -3,16 +3,27 @@ require_once("../../../../../../../wp-load.php");
 if($_POST && $_POST['projectId']) {
 
         $projectId = $_POST['projectId'];
-        $review = $_POST['review'];
+        $reviewData = $_POST['reviewData'];
+		$reviewFields = array(
+			'review' => 'field_5759bb8515ba5',
+			'rating' => 'field_5a856424e4351'
+		);
+		$clientId = get_field('client_id',$projectId); $clientId = $clientId['ID'];
+		$clientData = go_userdata($clientId);
 
-        if($review == '' || $review == null) {
-            $message = "<div class='alert alert-danger alert-dismissible' role='alert'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>×</span></button>You need to enter Review!</div>";
-            echo json_encode( array("message" => $message, "status" => 'fail') );
+        if( empty($reviewData['review']) ) 
+            $error = "<div class='alert alert-danger alert-dismissible' role='alert'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>×</span></button>You need to enter Review!</div>";
+		elseif( empty($reviewData['rating']) ) 
+            $error = "<div class='alert alert-danger alert-dismissible' role='alert'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>×</span></button>You need to set Rating!</div>";
+        
+		if( !empty($error) ){
+			echo json_encode( array("message" => $error, "status" => 'fail') );
             die;
-        }
+		}
 
         // updating project client's review
-        update_field('field_5759bb8515ba5',$review,$projectId);
+		foreach($reviewFields as $name => $system_name)
+			update_field($system_name,$reviewData[$name],$projectId);
 
         // get all PLs
         $agents = get_field('agent_id',$projectId);
@@ -24,11 +35,11 @@ if($_POST && $_POST['projectId']) {
                 $agentId = $agent[0];
             }
             $agentsReviews = get_field('reviews','user_' . $agentId);
-            $agentReviewsArray = array();
-            foreach($agentsReviews as $agentReview) {
-                $agentReviewsArray[] = array('review' => $agentReview['review'], 'projectId' => $agentReview['projectId']);
-            }
-            $agentReviewsArray[] = array('review' => $review, 'projectId' => $projectId);
+            $agentReviewsArray = $agentsReviews;
+            /*foreach($agentsReviews as $agentReview) {
+                $agentReviewsArray[] =  $agentReview;//array('review' => $agentReview['review'], 'rating' => $agentReview['rating'], 'projectId' => $agentReview['projectId']);
+            }*/
+            $agentReviewsArray[] = array('review' => $reviewData['review'], 'rating' => $reviewData['rating'], 'projectId' => $projectId);
             update_field('field_57713b055a0ee',$agentReviewsArray,'user_' . $agentId);
         }
 
@@ -42,29 +53,18 @@ if($_POST && $_POST['projectId']) {
                 $contractorId = $contractor[0];
             }
             $contractorsReviews = get_field('reviews','user_' . $contractorId);
-            $contractorsReviewsArray = array();
-            foreach($contractorsReviews as $contractorReview) {
-                $contractorsReviewsArray[] = array('review' => $contractorReview['review'], 'projectId' => $contractorReview['projectId']);
-            }
-            $contractorsReviewsArray[] = array('review' => $review, 'projectId' => $projectId);
+            $contractorsReviewsArray = $contractorsReviews;
+            /*foreach($contractorsReviews as $contractorReview) {
+                $contractorsReviewsArray[] = array('review' => $contractorReview['review'], 'rating' => $contractorReview['rating'], 'projectId' => $contractorReview['projectId']);
+            }*/
+            $contractorsReviewsArray[] = array('review' => $reviewData['review'], 'rating' => $reviewData['rating'], 'projectId' => $projectId);
             update_field('field_57713b055a0ee',$contractorsReviewsArray,'user_' . $contractorId);
         }
 
-        $message = '<div class="font-size-18 margin-bottom-20">Review from client:</div>';
-        $message = '<div class="chat">
-                        <div class="chat-avatar">
-                                <a class="avatar">
-                                        <img src="' . $clientData->avatar . '">
-                                </a>
-                        </div>
-                        <div class="chat-body">
-                                <div class="chat-content text-left">
-                                        <div class="margin-bottom-5"><strong style="font-weight:normal;">' . $clientData->first_name . ' ' . $clientData->last_name . '</strong></div>
-                                        <p>' . $review . '</p>
-
-                                </div>
-                        </div>
-                </div>';
+        //$message = '<div class="font-size-18 margin-bottom-20">Review from client:</div>';
+		ob_start();
+		include('../../views_v2/projectReviewMessage.php');
+		$message = ob_get_clean();
         echo json_encode( array("message" => $message, "status" => 'success') );
         die;
 }

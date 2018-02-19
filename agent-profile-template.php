@@ -2,6 +2,11 @@
 /*
 Template Name: Agent Profile
 */
+global $need_starrating;
+
+$need_starrating = array(
+	'styles' => true
+);
 
 $agent_name = get_query_var('agent_name');
 $agent = get_user_by('login', $agent_name);
@@ -69,6 +74,15 @@ $agent_data = go_userdata($agent->ID);
 									<?php endif; ?>
 								</div>
 							</div>
+						</div>
+					</div>
+					<div class="panel">
+						<div class="panel-body">
+							<h3 class="section-title"> Reviews </h3>
+							<?php 
+								$agent_id = $agent->ID; 
+								include('contacts-templates/previews/page-parts/project-reviews.php'); 
+							?>
 						</div>
 					</div>
 				</div>

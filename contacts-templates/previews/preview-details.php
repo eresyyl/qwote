@@ -1,9 +1,12 @@
 <?php
 require_once( ABSPATH . 'wp-load.php');
+
 $contact_id = $_GET['contact_id'];
 $contact_info = go_userdata($contact_id);
 $contact_type = get_field('user_type','user_' . $contact_id);
 $contact_stats = go_projects_statistic($contact_id);
+
+
 
 if($contact_type == 'Client') {
         $quotes = $contact_stats->quote;
@@ -239,39 +242,15 @@ elseif($contact_type == 'Agent') {
                 <?php endif; ?>
 
                 <?php if($contact_type == 'Agent' || $contact_type == 'Contractor' ) : ?>
-                    <div class="row">
-                         <div class="col-md-12">
-                             <h4 color="blue-grey-800">Reviews</h4>
-
-                             <?php if(get_field('reviews','user_' . $contact_id)) : $reviews = get_field('reviews','user_' . $contact_id);
-                             foreach($reviews as $review) : $reviewProjectId = $review['projectId']; $reviewUserId = get_field('client_id',$reviewProjectId);
-                             if($reviewUserId['ID']) {
-                                 $reviewUserId = $reviewUserId['ID'];
-                             }
-                             elseif($reviewUserId[0]) {
-                                 $reviewUserId = $reviewUserId[0];
-                             }
-                             $reviewUserData = go_userdata($reviewUserId);
-                             if(get_the_title($reviewProjectId) != '') :
-                             ?>
-                                 <div class="widget widget-shadow bg-blue-grey-100">
-                                    <div class="widget-body">
-                                      <div class="avatar avatar-sm pull-left margin-right-10 margin-top-5">
-                                        <img src="<?php echo $reviewUserData->avatar; ?>" alt="">
-                                      </div>
-                                      <div class="info margin-bottom-25">
-                                        <div class="blue-grey-700 text-uppercase"><?php echo $reviewUserData->first_name . ' ' . $reviewUserData->last_name; ?></div>
-                                        <div class="blue-grey-400 text-capitalize"><?php echo get_the_title($reviewProjectId); ?></div>
-                                      </div>
-                                      <p class=""><?php echo $review['review']; ?></p>
-                                    </div>
-                                  </div>
-                             <?php endif; endforeach; else : ?>
-                                 <p class="text-center">No reviews yet.</p>
-                             <?php endif; ?>
-
-                         </div>
-                     </div>
+					<div class="row">
+						<div class="col-md-12">
+							<h4 color="blue-grey-800">Reviews</h4>
+							<?php 
+								$agent_id = $contact_id; 
+								include('page-parts/project-reviews.php'); 
+							?>							
+						</div>
+					</div>
                 <?php endif; ?>
 
                 <?php if( (is_agent() || is_headcontractor()) && $contact_type != 'Head') : ?>

@@ -3,6 +3,13 @@
 Template Name: Contacts List
 */
 go_check_registered();
+
+global $need_starrating;
+
+$need_starrating = array(
+	'styles' => true
+);
+
 if(is_client()) {
 	get_template_part('contacts-templates/main/contacts','client');
 	die;

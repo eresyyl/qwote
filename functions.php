@@ -17,6 +17,7 @@ require_once( trailingslashit( get_template_directory() ). 'functions/v2_recalcu
 
 
 require_once( trailingslashit( get_template_directory() ). 'functions/register_scripts.php' );
+require_once( trailingslashit( get_template_directory() ). 'functions/register_styles.php' );
 require_once( trailingslashit( get_template_directory() ). 'functions/rewrite_rules.php' );
 
 add_filter( 'show_admin_bar', '__return_false' );

@@ -1,5 +1,12 @@
 <?php
+global $need_starrating;
+
+$need_starrating = array(
+	'styles' => true,
+	'scripts' => true
+);
 // getting defaults
+
 $currentUserId = current_user_id();
 $projectId = get_the_ID();
 
@@ -61,41 +68,8 @@ die;
 
 	<div class="page-main">
 		<div class="page-content bg-white">
-			
-				<?php // Review (show only when projectStatus == completed) ?>
-					<?php if($projectStatus->status == 'completed') : ?>
-					<div class="row margin-bottom-40 text-center">
-						<div class="col-md-12">
-							<?php if(get_field('projectReview',$projectId)) : ?>
-								<div class="font-size-30 blue-grey-700 margin-bottom-20">Review from <?php echo $clientData->first_name; ?>&nbsp;<?php echo $clientData->last_name; ?>:</div>																
-             <div class="chat chat-head">
-                        <div class="chat-avatar">
-                                <a class="avatar">
-                                        <img src="<?php echo $clientData->avatar ;?>">
-                                </a>
-                        </div>
-                        <div class="chat-body">
-                                <div class="chat-content text-left">
-                                        <div class="margin-bottom-5"><strong style="font-weight:normal;"><?php echo $clientData->first_name; ?>&nbsp;<?php echo $clientData->last_name; ?></strong> </div>
-																	<div class="rating rating-lg" data-score="5" data-plugin="rating" style="cursor: pointer;"><i data-alt="1" class="icon wb-star orange-600" title="bad"></i>&nbsp;<i data-alt="2" class="icon wb-star orange-600" title="poor"></i>&nbsp;<i data-alt="3" class="icon wb-star orange-600" title="regular"></i>&nbsp;<i data-alt="4" class="icon wb-star orange-600" title="good"></i>&nbsp;<i data-alt="5" class="icon wb-star orange-600" title="gorgeous"></i><input name="score" type="hidden" value="5"></div>
-                                        <p><?php the_field('projectReview',$projectId); ?></p>
-                                </div>
-                        </div>
-                </div>
-							<?php else : ?>
-								<div class="reviewBlock">
-									<div class="margin-bottom-20 font-size-18" style="color:#37474f;">Please leave a review:</div>
-									<div id="projectReviewResponse"></div>
-									<div class="margin-bottom-20">
-										<textarea name="projectReview" class="form-control input-sm quote_textarea"></textarea>
-									</div>
-									<a class="btn btn-lg btn-success margin-horizontal-5 projectReviewSave" data-project='<?php echo $projectId; ?>'>Save</a>
-								</div>
-						<?php endif; ?>
-						</div>
-					</div>
-					<?php endif; ?>
-			
+					<?php include('views_v2/projectReview.php'); ?>
+					
 					<?php /*
 						*** NOT DONE!!! Need to make AJAX function
 					*/ ?>

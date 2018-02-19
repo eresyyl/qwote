@@ -255,8 +255,11 @@ $(document).ready(function() {
 
     $('.projectReviewSave').click(function(){
 		var projectId = $(this).attr('data-project')
-            review = $('textarea[name=projectReview]').val();
-			saveReview(projectId,review);
+            reviewData = {
+				review: $('textarea[name=projectReview]').val(),
+				rating: $('#projectRating').val()
+			};
+			saveReview(projectId,reviewData);
 	});
 
 	$('.uploadFile').click(function(){
@@ -1535,14 +1538,20 @@ function uploadSchedulephoto(file,rand,photoContainer) {
 
 }
 
-function saveReview(projectId,review) {
+function saveReview(projectId,reviewData) {
 	$('#projectReviewResponse').html('');
 	var url = "/wp-content/themes/go/project-templates/main_v2/manage_v2/ajax/reviewSave.php";
 
-        if(review.length < 1) {
-            $('#projectReviewResponse').html("<div class='alert alert-danger alert-dismissible' role='alert'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>×</span></button>You need to enter Review!</div>");
+		let errorMessage = '';
+        if(!reviewData.review)
+			errorMessage = "<div class='alert alert-danger alert-dismissible' role='alert'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>×</span></button>You need to enter Review!</div>";
+		else if(!reviewData.rating) 
+			errorMessage = "<div class='alert alert-danger alert-dismissible' role='alert'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>×</span></button>You need to set Rating!</div>";
+		
+		if(errorMessage){
+			$('#projectReviewResponse').html(errorMessage);
             return false;
-        }
+		}
 
         showLoader();
 
@@ -1553,7 +1562,7 @@ function saveReview(projectId,review) {
 			cache: false,
 			data: {
                 'projectId' : projectId,
-                'review' : review
+                'reviewData' : reviewData
             },
    	 	success: function(response) {
 		        if(response.status == 'fail') {
