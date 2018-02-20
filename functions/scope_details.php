@@ -100,127 +100,129 @@ function go_scope_details_v2($template_id,$scopeId) {
 	$scopeDataDecoded = base64_decode($scopeData);
 	$scopeDataArray = json_decode($scopeDataDecoded,true);
 
-        $result = array();
-        $section_details = array();
-                while ( have_rows('quote_fields',$template_id) ) : the_row();
+    return go_scope_details_by_scope_data($template_id, $scopeDataArray);    
+}
 
-                        if( get_row_layout() == 'width_and_height' ) {
-                                $slug = get_sub_field('slug');
-                                $title = get_sub_field('title');
-                                $width = $scopeDataArray[$slug . "_width"];
-                                $lenght = $scopeDataArray[$slug . "_height"];
-													      $wallarea = $width * $lenght;
-                                $value =  $width . "x" . $lenght . " - Area " . $wallarea . " m2" ;
-                                $section_details[] = array('section_title' => $title, 'section_values' => array($value));
-                        }
-	                 
-	                      if( get_row_layout() == 'width_and_length' ) {
-                                $slug = get_sub_field('slug');
-                                $title = get_sub_field('title');
-                                $width = $scopeDataArray[$slug . "_width"];
-                                $lenght = $scopeDataArray[$slug . "_length"];
-                                $floorarea = $width * $lenght;
-                                $value =  $width . " x " . $lenght . " - Area - " . $floorarea . "m2";
-                                $section_details[] = array('section_title' => $title, 'section_values' => array($value));
-                        }
-	
-	                      if( get_row_layout() == 'price_and_area' ) {
-                                $slug = get_sub_field('slug');
-                                $title = get_sub_field('title');
-                                $supply_price = $scopeDataArray[$slug . "_price"];
-                                $supply_area = $scopeDataArray[$slug . "_area"];
-                                $supply_total = $supply_price * $supply_area;
-													      
-                                $value =  "$" . $supply_price . " x " . $supply_area ."m2 - Supply Cost: $" . $supply_total . "inc gst";
-                                $section_details[] = array('section_title' => $title, 'section_values' => array($value));
-                        }
-	
+function go_scope_details_by_scope_data($template_id, $scopeDataArray){
+	$result = array();
+	$section_details = array();
+	while ( have_rows('quote_fields',$template_id) ) : the_row();
 
-                        if( get_row_layout() == 'length' ) {
-                                $slug = get_sub_field('slug');
-                                $title = get_sub_field('title');
-                                $width = $scopeDataArray[$slug];
-                                $value =  $width . "m";
-                                $section_details[] = array('section_title' => $title, 'section_values' => array($value));
-                        }
+			if( get_row_layout() == 'width_and_height' ) {
+					$slug = get_sub_field('slug');
+					$title = get_sub_field('title');
+					$width = $scopeDataArray[$slug . "_width"];
+					$lenght = $scopeDataArray[$slug . "_height"];
+					$wallarea = $width * $lenght;
+					$value =  $width . "x" . $lenght . " - Area " . $wallarea . " m2" ;
+					$section_details[] = array('section_title' => $title, 'section_values' => array($value));
+			}
+		 
+			  if( get_row_layout() == 'width_and_length' ) {
+					$slug = get_sub_field('slug');
+					$title = get_sub_field('title');
+					$width = $scopeDataArray[$slug . "_width"];
+					$lenght = $scopeDataArray[$slug . "_length"];
+					$floorarea = $width * $lenght;
+					$value =  $width . " x " . $lenght . " - Area - " . $floorarea . "m2";
+					$section_details[] = array('section_title' => $title, 'section_values' => array($value));
+			}
 
-                        if( get_row_layout() == 'fields' ) {
-                                $slug = get_sub_field('slug');
-                                $data = $scopeDataArray[$slug . ""];
-                                $title = get_sub_field('title');
-                                $new_value = array();
-                                if(is_array($data)) {
-                                        foreach($data as $d) {
-                                                $cnt_field_name = preg_replace("/[^a-zA-Z0-9]/", "", $d);
-        					                              $cnt_field_name = strtolower($cnt_field_name);
-                                                $cnt_field_name = $cnt_field_name . "";
-                                                if (array_key_exists($cnt_field_name, $scopeDataArray)) {
-                                                        $value_cnt = $scopeDataArray[$cnt_field_name];
-                                                        $new_value[] = $d . " x " . $value_cnt;
-                                                }
-                                                else {
-                                                        $new_value[] = $d;
-                                                }
-                                        }
-                                        $value = $new_value;
-                                }
-                                else {
-                                        $cnt_field_name = preg_replace("/[^a-zA-Z0-9]/", "", $data);
-					$cnt_field_name = strtolower($cnt_field_name);
-                                        $cnt_field_name = $cnt_field_name . "";
-                                        if (array_key_exists($cnt_field_name, $scopeDataArray)) {
-                                                $value_cnt = $scopeDataArray[$cnt_field_name];
-                                                $new_value[] = $data . " x " . $value_cnt;
-                                        }
-                                        else {
-                                                $new_value[] = $data;
-                                        }
-                                        $value = $new_value;
-                                }
-                                $section_details[] = array('section_title' => $title, 'section_type' => 'flds', 'section_values' => $value);
-                        }
-	     
-	                     if( get_row_layout() == 'exclusions' ) {
-                                $slug = get_sub_field('slug');
-                                $data = $scopeDataArray[$slug . ""];
-                                $title = get_sub_field('title');
-                                $new_value = array();
-                                if(is_array($data)) {
-                                        foreach($data as $d) {
-                                                $cnt_field_name = preg_replace("/[^a-zA-Z0-9]/", "", $d);
-        					$cnt_field_name = strtolower($cnt_field_name);
-                                                $cnt_field_name = $cnt_field_name . "";
-                                                if (array_key_exists($cnt_field_name, $scopeDataArray)) {
-                                                        $value_cnt = $scopeDataArray[$cnt_field_name];
-                                                        $new_value[] = $d . " x " . $value_cnt;
-                                                }
-                                                else {
-                                                        $new_value[] = $d;
-                                                }
-                                        }
-                                        $value = $new_value;
-                                }
-                                else {
-                                        $cnt_field_name = preg_replace("/[^a-zA-Z0-9]/", "", $data);
-					$cnt_field_name = strtolower($cnt_field_name);
-                                        $cnt_field_name = $cnt_field_name . "";
-                                        if (array_key_exists($cnt_field_name, $scopeDataArray)) {
-                                                $value_cnt = $scopeDataArray[$cnt_field_name];
-                                                $new_value[] = $data . " x " . $value_cnt;
-                                        }
-                                        else {
-                                                $new_value[] = $data;
-                                        }
-                                        $value = $new_value;
-                                }
-                                $section_details[] = array('section_title' => $title, 'section_type' => 'flds', 'section_values' => $value);
-                        }
+			  if( get_row_layout() == 'price_and_area' ) {
+					$slug = get_sub_field('slug');
+					$title = get_sub_field('title');
+					$supply_price = $scopeDataArray[$slug . "_price"];
+					$supply_area = $scopeDataArray[$slug . "_area"];
+					$supply_total = $supply_price * $supply_area;
+											  
+					$value =  "$" . $supply_price . " x " . $supply_area ."m2 - Supply Cost: $" . $supply_total . "inc gst";
+					$section_details[] = array('section_title' => $title, 'section_values' => array($value));
+			}
 
-	
 
-                endwhile;
-                $result = $section_details;
-                $i++; $j++;
+			if( get_row_layout() == 'length' ) {
+					$slug = get_sub_field('slug');
+					$title = get_sub_field('title');
+					$width = $scopeDataArray[$slug];
+					$value =  $width . "m";
+					$section_details[] = array('section_title' => $title, 'section_values' => array($value));
+			}
+
+			if( get_row_layout() == 'fields' ) {
+					$slug = get_sub_field('slug');
+					$data = $scopeDataArray[$slug . ""];
+					$title = get_sub_field('title');
+					$new_value = array();
+					if(is_array($data)) {
+							foreach($data as $d) {
+									$cnt_field_name = preg_replace("/[^a-zA-Z0-9]/", "", $d);
+											  $cnt_field_name = strtolower($cnt_field_name);
+									$cnt_field_name = $cnt_field_name . "";
+									if (array_key_exists($cnt_field_name, $scopeDataArray)) {
+											$value_cnt = $scopeDataArray[$cnt_field_name];
+											$new_value[] = $d . " x " . $value_cnt;
+									}
+									else {
+											$new_value[] = $d;
+									}
+							}
+							$value = $new_value;
+					}
+					else {
+							$cnt_field_name = preg_replace("/[^a-zA-Z0-9]/", "", $data);
+							$cnt_field_name = strtolower($cnt_field_name);
+							$cnt_field_name = $cnt_field_name . "";
+							if (array_key_exists($cnt_field_name, $scopeDataArray)) {
+									$value_cnt = $scopeDataArray[$cnt_field_name];
+									$new_value[] = $data . " x " . $value_cnt;
+							}
+							else {
+									$new_value[] = $data;
+							}
+							$value = $new_value;
+					}
+					$section_details[] = array('section_title' => $title, 'section_type' => 'flds', 'section_values' => $value);
+			}
+
+			 if( get_row_layout() == 'exclusions' ) {
+					$slug = get_sub_field('slug');
+					$data = $scopeDataArray[$slug . ""];
+					$title = get_sub_field('title');
+					$new_value = array();
+					if(is_array($data)) {
+							foreach($data as $d) {
+									$cnt_field_name = preg_replace("/[^a-zA-Z0-9]/", "", $d);
+									$cnt_field_name = strtolower($cnt_field_name);
+									$cnt_field_name = $cnt_field_name . "";
+									if (array_key_exists($cnt_field_name, $scopeDataArray)) {
+											$value_cnt = $scopeDataArray[$cnt_field_name];
+											$new_value[] = $d . " x " . $value_cnt;
+									}
+									else {
+											$new_value[] = $d;
+									}
+							}
+							$value = $new_value;
+					}
+					else {
+							$cnt_field_name = preg_replace("/[^a-zA-Z0-9]/", "", $data);
+							$cnt_field_name = strtolower($cnt_field_name);
+							$cnt_field_name = $cnt_field_name . "";
+							if (array_key_exists($cnt_field_name, $scopeDataArray)) {
+									$value_cnt = $scopeDataArray[$cnt_field_name];
+									$new_value[] = $data . " x " . $value_cnt;
+							}
+							else {
+									$new_value[] = $data;
+							}
+							$value = $new_value;
+					}
+					$section_details[] = array('section_title' => $title, 'section_type' => 'flds', 'section_values' => $value);
+			}
+
+	endwhile;
+	$result = $section_details;
+	$i++; $j++;
 
 
 	return $result;

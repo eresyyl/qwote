@@ -8,7 +8,10 @@ $agentToken = $_POST['agentToken'];
 
 
 <div class="row text-center">
-
+  <div class="blue-grey-800 font-size-30 navbar-fixed-top padding-top-70">
+    <div class="col-md-3 bg-white pull-right img-thumbnail"id="total-quote-outer">
+        Your total quote is <div class="inline red-800 bold" id="total-quote">$0.00</div></div>
+  </div>
   <form id="projectDetailsForm" method="POST" action="<?php bloginfo('url'); ?>/add_quote/step3">
   <input type="hidden" name="templateId" value="<?php echo $templateId; ?>">
   <input type="hidden" name="projectId" value="<?php echo $projectId; ?>">
