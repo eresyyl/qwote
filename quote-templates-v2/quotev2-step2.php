@@ -81,6 +81,11 @@ if(!$_POST) {
     margin: 0 auto;
     border-radius: 100px;
 }
+
+#total-quote-outer{
+	position: relative;
+	top:-4px;
+}
 </style>
 <!-- Page -->
 

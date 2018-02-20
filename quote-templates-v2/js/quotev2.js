@@ -27,6 +27,21 @@ $(document).ready(function() {
 		$.redirect(url,{ projectId: projectId });
 		//window.location.replace(url + '?projectId=' + projectId);
 	});
+	
+	$('form#projectDetailsForm input').change(function() {
+		console.log(this);
+        var url = "/wp-content/themes/go/quote-templates-v2/ajax/calculateQuote.php";
+		$.ajax({
+			type: 'post',
+			url: url,
+			data: $('form#projectDetailsForm').serialize()
+        }).done(function(res) {
+			res = JSON.parse(res);
+			$('#total-quote').html(`\$${res.message}`);
+        }).fail(function() {
+          console.log('fail');
+        });
+    });
 
 	$('.gotoStep3').click(function(){
 		showLoader();
